@@ -1,0 +1,34 @@
+1.
+DELIMITER $$
+
+CREATE FUNCTION is_even_or_odd(n INT)
+RETURNS VARCHAR(10)
+DETERMINISTIC
+BEGIN
+    RETURN IF(n % 2 = 0, 'Even', 'Odd');
+END$$
+
+DELIMITER ;
+
+2.
+DELIMITER $$
+
+CREATE FUNCTION find_max(a INT, b INT, c INT)
+RETURNS INT
+DETERMINISTIC
+BEGIN
+    DECLARE max_val INT;
+    SET max_val = a;
+    
+    IF b > max_val THEN
+        SET max_val = b;
+    END IF;
+
+    IF c > max_val THEN
+        SET max_val = c;
+    END IF;
+
+    RETURN max_val;
+END$$
+
+DELIMITER ;
