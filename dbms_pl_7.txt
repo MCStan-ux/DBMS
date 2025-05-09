@@ -1,0 +1,96 @@
+✅ Step-by-step Setup
+1. Table and Sample Data
+sql
+Copy
+Edit
+CREATE TABLE employee (
+  emp_id INT PRIMARY KEY,
+  emp_name VARCHAR(50),
+  salary DECIMAL(10, 2)
+);
+
+INSERT INTO employee VALUES
+(101, 'Alice', 35000),
+(102, 'Bob', 48000),
+(103, 'Charlie', 52000);
+
+
+
+
+🔴 A. Cursor Without Handler (⚠️ Error if no more rows)
+  
+DELIMITER $$
+
+CREATE PROCEDURE use_cursor_without_handler()
+BEGIN
+  DECLARE done INT DEFAULT FALSE;
+  DECLARE empSal DECIMAL(10,2);
+  DECLARE cur CURSOR FOR SELECT salary FROM employee;
+  
+  -- ⚠ No handler here
+
+  OPEN cur;
+
+  read_loop: LOOP
+    FETCH cur INTO empSal;
+    -- When no handler, this may throw an error once rows are finished
+    SELECT empSal AS salary_output;
+  END LOOP;
+
+  CLOSE cur;
+END$$
+
+DELIMITER ;
+🛑 This will throw an error after the last row is fetched.
+
+
+  
+✅ B. Cursor With EXIT Handler (Safe way)
+
+DELIMITER $$
+
+CREATE PROCEDURE use_cursor_with_handler()
+BEGIN
+  DECLARE done INT DEFAULT FALSE;
+  DECLARE empSal DECIMAL(10,2);
+  DECLARE cur CURSOR FOR SELECT salary FROM employee;
+
+  -- Safe handler
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+  OPEN cur;
+
+  read_loop: LOOP
+    FETCH cur INTO empSal;
+    IF done THEN 
+      LEAVE read_loop;
+    END IF;
+    SELECT empSal AS salary_output;
+  END LOOP;
+
+  CLOSE cur;
+END$$
+
+DELIMITER ;
+
+
+
+🔁 To Run It:
+
+CALL use_cursor_with_handler();
+
+
+
+
+
+
+
+
+
+
+
+
+
+Search
+
+Re
