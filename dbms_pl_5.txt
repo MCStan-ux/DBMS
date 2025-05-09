@@ -1,0 +1,25 @@
+DELIMITER $$
+
+CREATE FUNCTION DISP_LEVEL(id INT)
+RETURNS VARCHAR(10)
+DETERMINISTIC 
+BEGIN
+    DECLARE emp_salary INT;
+    DECLARE level VARCHAR(10);
+
+    SELECT salary INTO emp_salary 
+    FROM employee 
+    WHERE emp_id = id;
+
+    IF emp_salary < 50000 THEN
+        SET level = 'silver';
+    ELSEIF emp_salary >= 50000 AND emp_salary < 65000 THEN
+        SET level = 'gold';
+    ELSE
+        SET level = 'platinum';
+    END IF;
+
+    RETURN level;
+END$$
+
+DELIMITER ;
